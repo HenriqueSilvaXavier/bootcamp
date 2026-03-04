@@ -3,12 +3,16 @@ public class Film {
     private String director;
     private int releaseYear;
     private String genre;
+    private int duration;
+    private double rating;
 
-    public Film(String title, String director, int releaseYear, String genre) {
+    public Film(String title, String director, int releaseYear, String genre, int duration, double rating) {
         this.title = title;
         this.director = director;
         this.releaseYear = releaseYear;
         this.genre = genre;
+        this.duration = duration;
+        this.rating = rating;
     }
 
     // GETTERS
@@ -20,12 +24,20 @@ public class Film {
         return director;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
     public int getReleaseYear() {
         return releaseYear;
     }
 
     public String getGenre() {
         return genre;
+    }
+
+    public double getRating() {
+        return rating;
     }
 
     // SETTERS
@@ -44,6 +56,13 @@ public class Film {
     public void setGenre(String genre) {
         this.genre = genre;
     }
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
 
     @Override
     public String toString() {
@@ -52,6 +71,7 @@ public class Film {
                 ", director='" + director + '\'' +
                 ", releaseYear=" + releaseYear +
                 ", genre='" + genre + '\'' +
+                ", rating=" + rating +
                 '}';
     }
 }
