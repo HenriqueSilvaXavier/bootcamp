@@ -26,19 +26,19 @@ public class Main {
             switch (option) {
 
                 case 1:
-                    adicionarFilme(scanner);
+                    addFilm(scanner);
                     break;
 
                 case 2:
-                    listarFilmes();
+                    getFilms();
                     break;
 
                 case 3:
-                    editarFilme(scanner);
+                    editFilm(scanner);
                     break;
 
                 case 4:
-                    excluirFilme(scanner);
+                    removeFilm(scanner);
                     break;
 
                 case 0:
@@ -55,31 +55,37 @@ public class Main {
     }
 
     // CREATE
-    public static void adicionarFilme(Scanner scanner) {
-        System.out.println("Digite o título:");
-        String title = scanner.nextLine();
+    public static void addFilm(Scanner scanner) {
+        try {
 
-        System.out.println("Digite o diretor:");
-        String director = scanner.nextLine();
+            System.out.println("Digite o título:");
+            String title = scanner.nextLine();
 
-        System.out.println("Digite o ano:");
-        int year = scanner.nextInt();
-        scanner.nextLine();
+            System.out.println("Digite o diretor:");
+            String director = scanner.nextLine();
 
-        System.out.println("Digite o gênero:");
-        String genre = scanner.nextLine();
+            System.out.println("Digite o ano:");
+            int year = scanner.nextInt();
+            scanner.nextLine();
 
-        System.out.println("Digite a duração (em minutos):");
-        int duration = scanner.nextInt();
-        scanner.nextLine();
+            System.out.println("Digite o gênero:");
+            String genre = scanner.nextLine();
 
-        films.add(new Film(title, director, year, genre, duration));
+            System.out.println("Digite a duração:");
+            int duration = scanner.nextInt();
+            scanner.nextLine();
 
-        System.out.println("Filme adicionado com sucesso!");
+            films.add(new Film(title, director, year, genre, duration));
+
+            System.out.println("Filme adicionado com sucesso!");
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
     }
 
     // READ
-    public static void listarFilmes() {
+    public static void getFilms() {
 
         if (films.isEmpty()) {
             System.out.println("Nenhum filme cadastrado.");
@@ -93,60 +99,83 @@ public class Main {
     }
 
     // UPDATE
-    public static void editarFilme(Scanner scanner) {
+    public static void editFilm(Scanner scanner) {
 
-        listarFilmes();
-
-        if (films.isEmpty()) return;
-
-        System.out.println("Digite o índice do filme que deseja editar:");
-        int index = scanner.nextInt();
-        scanner.nextLine();
-
-        if (index < 0 || index >= films.size()) {
-            System.out.println("Índice inválido!");
+        if (films.isEmpty()) {
+            System.out.println("Nenhum filme cadastrado.");
             return;
         }
 
-        Film film = films.get(index);
+        getFilms();
 
-        System.out.println("Novo título:");
-        film.setTitle(scanner.nextLine());
+        try {
 
-        System.out.println("Novo diretor:");
-        film.setDirector(scanner.nextLine());
+            System.out.println("Digite o índice do filme que deseja editar:");
+            int index = scanner.nextInt();
+            scanner.nextLine();
 
-        System.out.println("Novo ano:");
-        film.setReleaseYear(scanner.nextInt());
-        scanner.nextLine();
+            if (index < 0 || index >= films.size()) {
+                System.out.println("Índice inválido!");
+                return;
+            }
 
-        System.out.println("Novo gênero:");
-        film.setGenre(scanner.nextLine());
+            Film film = films.get(index);
 
-        System.out.println("Nova duração (em minutos):");
-        film.setDuration(scanner.nextInt());
-        scanner.nextLine();
+            System.out.println("Novo título:");
+            film.setTitle(scanner.nextLine());
 
-        System.out.println("Filme atualizado com sucesso!");
+            System.out.println("Novo diretor:");
+            film.setDirector(scanner.nextLine());
+
+            System.out.println("Novo ano:");
+            film.setReleaseYear(scanner.nextInt());
+            scanner.nextLine();
+
+            System.out.println("Novo gênero:");
+            film.setGenre(scanner.nextLine());
+
+            System.out.println("Nova duração (em minutos):");
+            film.setDuration(scanner.nextInt());
+            scanner.nextLine();
+
+            System.out.println("Filme atualizado com sucesso!");
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro de regra de negócio: " + e.getMessage());
+            scanner.nextLine(); // limpa buffer se necessário
+        } catch (Exception e) {
+            System.out.println("Entrada inválida! Digite os valores corretamente.");
+            scanner.nextLine(); // limpa buffer
+        }
     }
 
     // DELETE
-    public static void excluirFilme(Scanner scanner) {
+    public static void removeFilm(Scanner scanner) {
 
-        listarFilmes();
-
-        if (films.isEmpty()) return;
-
-        System.out.println("Digite o índice do filme que deseja excluir:");
-        int index = scanner.nextInt();
-        scanner.nextLine();
-
-        if (index < 0 || index >= films.size()) {
-            System.out.println("Índice inválido!");
+        if (films.isEmpty()) {
+            System.out.println("Nenhum filme cadastrado.");
             return;
         }
 
-        films.remove(index);
-        System.out.println("Filme removido com sucesso!");
+        getFilms();
+
+        try {
+
+            System.out.println("Digite o índice do filme que deseja excluir:");
+            int index = scanner.nextInt();
+            scanner.nextLine();
+
+            if (index < 0 || index >= films.size()) {
+                System.out.println("Índice inválido!");
+                return;
+            }
+
+            films.remove(index);
+            System.out.println("Filme removido com sucesso!");
+
+        } catch (Exception e) {
+            System.out.println("Entrada inválida! Digite um número válido.");
+            scanner.nextLine(); // limpa buffer
+        }
     }
 }
