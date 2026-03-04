@@ -22,18 +22,17 @@ public class Film {
         return director;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
     public int getReleaseYear() {
         return releaseYear;
     }
-
+    
     public String getGenre() {
         return genre;
     }
 
+    public int getDuration() {
+        return duration;
+    }
     // SETTERS
     public void setTitle(String title) {
         this.title = title;
@@ -60,7 +59,8 @@ public class Film {
                 "title='" + title + '\'' +
                 ", director='" + director + '\'' +
                 ", releaseYear=" + releaseYear +
-                ", genre='" + genre + 
+                ", genre='" + genre + '\'' +
+                ", duration=" + duration +
                 '}';
     }
 }
