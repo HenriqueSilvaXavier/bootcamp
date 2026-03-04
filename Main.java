@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        int opcao;
+        int option;
 
         do {
             System.out.println("\n===== MENU =====");
@@ -20,10 +20,10 @@ public class Main {
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
-            opcao = scanner.nextInt();
+            option = scanner.nextInt();
             scanner.nextLine(); // limpar buffer
 
-            switch (opcao) {
+            switch (option) {
 
                 case 1:
                     adicionarFilme(scanner);
@@ -49,7 +49,7 @@ public class Main {
                     System.out.println("Opção inválida!");
             }
 
-        } while (opcao != 0);
+        } while (option != 0);
 
         scanner.close();
     }
