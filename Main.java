@@ -73,11 +73,7 @@ public class Main {
         int duration = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.println("Digite a avaliação (0 a 10):");
-        double rating = scanner.nextDouble();
-        scanner.nextLine();
-
-        films.add(new Film(title, director, year, genre, duration, rating));
+        films.add(new Film(title, director, year, genre, duration));
 
         System.out.println("Filme adicionado com sucesso!");
     }
@@ -131,10 +127,6 @@ public class Main {
         film.setDuration(scanner.nextInt());
         scanner.nextLine();
 
-        System.out.println("Nova avaliação:");
-        film.setRating(scanner.nextDouble());
-        scanner.nextLine();
-        
         System.out.println("Filme atualizado com sucesso!");
     }
 
