@@ -3,6 +3,20 @@ import java.util.Scanner;
 
 public class Main {
 
+    public static void printFilms(FilmService service) {
+
+        List<Film> films = service.getFilms();
+
+        if (films.isEmpty()) {
+            System.out.println("Nenhum filme cadastrado.");
+            return;
+        }
+
+        for (int i = 0; i < films.size(); i++) {
+            System.out.println(i + " - " + films.get(i));
+        }
+    }
+
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
@@ -11,6 +25,7 @@ public class Main {
         int option;
 
         do {
+
             System.out.println("\n===== MENU =====");
             System.out.println("1 - Adicionar filme");
             System.out.println("2 - Listar filmes");
@@ -53,24 +68,14 @@ public class Main {
 
                 case 2:
 
-                    List<Film> films = service.getFilms();
-
-                    if (films.isEmpty()) {
-                        System.out.println("Nenhum filme cadastrado.");
-                    } else {
-                        for (int i = 0; i < films.size(); i++) {
-                            System.out.println(i + " - " + films.get(i));
-                        }
-                    }
+                    printFilms(service);
 
                     break;
 
                 case 3:
-                    List<Film> filmsEdit = service.getFilms();
 
-                    for (int i = 0; i < filmsEdit.size(); i++) {
-                        System.out.println(i + " - " + filmsEdit.get(i));
-                    }
+                    printFilms(service);
+
                     System.out.print("Índice do filme: ");
                     int editIndex = scanner.nextInt();
                     scanner.nextLine();
@@ -99,11 +104,8 @@ public class Main {
                     break;
 
                 case 4:
-                    filmsEdit = service.getFilms();
 
-                    for (int i = 0; i < filmsEdit.size(); i++) {
-                        System.out.println(i + " - " + filmsEdit.get(i));
-                    }
+                    printFilms(service);
 
                     System.out.print("Índice do filme: ");
                     int index = scanner.nextInt();
@@ -162,11 +164,8 @@ public class Main {
                     break;
 
                 case 5:
-                    List<Film> filmsDelete = service.getFilms();
 
-                    for (int i = 0; i < filmsDelete.size(); i++) {
-                        System.out.println(i + " - " + filmsDelete.get(i));
-                    }
+                    printFilms(service);
 
                     System.out.print("Índice do filme para deletar: ");
                     int deleteIndex = scanner.nextInt();

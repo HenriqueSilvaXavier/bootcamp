@@ -59,6 +59,18 @@ public class FilmService {
         }
     }
 
+    public void printFilms() {
+
+        if (films.isEmpty()) {
+            System.out.println("Nenhum filme cadastrado.");
+            return;
+        }
+
+        for (int i = 0; i < films.size(); i++) {
+            System.out.println(i + " - " + films.get(i));
+        }
+    }
+
     public boolean isEmpty() {
         return films.isEmpty();
     }
