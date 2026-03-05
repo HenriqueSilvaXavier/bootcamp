@@ -162,6 +162,11 @@ public class Main {
                     break;
 
                 case 5:
+                    List<Film> filmsDelete = service.getFilms();
+
+                    for (int i = 0; i < filmsDelete.size(); i++) {
+                        System.out.println(i + " - " + filmsDelete.get(i));
+                    }
 
                     System.out.print("Índice do filme para deletar: ");
                     int deleteIndex = scanner.nextInt();
