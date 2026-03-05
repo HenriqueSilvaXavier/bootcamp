@@ -3,20 +3,6 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void printFilms(FilmService service) {
-
-        List<Film> films = service.getFilms();
-
-        if (films.isEmpty()) {
-            System.out.println("Nenhum filme cadastrado.");
-            return;
-        }
-
-        for (int i = 0; i < films.size(); i++) {
-            System.out.println(i + " - " + films.get(i));
-        }
-    }
-
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
@@ -68,13 +54,13 @@ public class Main {
 
                 case 2:
 
-                    printFilms(service);
+                    service.printFilms();
 
                     break;
 
                 case 3:
 
-                    printFilms(service);
+                    service.printFilms();
 
                     System.out.print("Índice do filme: ");
                     int editIndex = scanner.nextInt();
@@ -105,7 +91,7 @@ public class Main {
 
                 case 4:
 
-                    printFilms(service);
+                    service.printFilms();
 
                     System.out.print("Índice do filme: ");
                     int index = scanner.nextInt();
@@ -165,7 +151,7 @@ public class Main {
 
                 case 5:
 
-                    printFilms(service);
+                    service.printFilms();
 
                     System.out.print("Índice do filme para deletar: ");
                     int deleteIndex = scanner.nextInt();
