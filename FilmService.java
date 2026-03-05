@@ -1,23 +1,33 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FilmService {
 
-    public List<Film> films = new ArrayList<>();
+    public final List<Film> films = new ArrayList<>();
+
+    public void validateIndex(int index) {
+        if (index < 0 || index >= films.size()) {
+            throw new IllegalArgumentException("Índice inválido.");
+        }
+    }
 
     public void addFilm(Film film) {
         films.add(film);
     }
 
     public List<Film> getFilms() {
-        return films;
+        return Collections.unmodifiableList(films);
     }
 
     public void removeFilm(int index) {
+        validateIndex(index);
         films.remove(index);
     }
 
     public void editFilm(int index, String title, String director, int year, String genre, int duration) {
+
+        validateIndex(index);
 
         Film film = films.get(index);
 
@@ -29,6 +39,8 @@ public class FilmService {
     }
 
     public void editOneField(int index, int field, Object value) {
+
+        validateIndex(index);
 
         Film film = films.get(index);
 
