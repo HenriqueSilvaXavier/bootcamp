@@ -3,7 +3,7 @@ import java.util.List;
 
 public class FilmService {
 
-    private List<Film> films = new ArrayList<>();
+    public List<Film> films = new ArrayList<>();
 
     public void addFilm(Film film) {
         films.add(film);
