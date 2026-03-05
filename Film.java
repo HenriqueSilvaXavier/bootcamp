@@ -1,6 +1,7 @@
 import java.time.Year;
 
 public class Film {
+
     public String title;
     public String director;
     public int releaseYear;
@@ -16,28 +17,13 @@ public class Film {
     }
 
     // GETTERS
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDirector() {
-        return director;
-    }
-
-    public int getReleaseYear() {
-        return releaseYear;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
+    public String getTitle() { return title; }
+    public String getDirector() { return director; }
+    public int getReleaseYear() { return releaseYear; }
+    public String getGenre() { return genre; }
+    public int getDuration() { return duration; }
 
     // SETTERS COM VALIDAÇÃO
-
     public void setTitle(String title) {
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("O título não pode ser vazio.");
@@ -54,15 +40,12 @@ public class Film {
 
     public void setReleaseYear(int releaseYear) {
         int currentYear = Year.now().getValue();
-
         if (releaseYear < 1888) {
             throw new IllegalArgumentException("Não existiam filmes antes de 1888.");
         }
-
         if (releaseYear > currentYear) {
             throw new IllegalArgumentException("O ano não pode ser no futuro.");
         }
-
         this.releaseYear = releaseYear;
     }
 
@@ -77,11 +60,9 @@ public class Film {
         if (duration <= 0) {
             throw new IllegalArgumentException("A duração deve ser maior que zero.");
         }
-
         if (duration > 600) {
             throw new IllegalArgumentException("A duração máxima permitida é 600 minutos.");
         }
-
         this.duration = duration;
     }
 
