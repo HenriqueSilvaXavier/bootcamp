@@ -1,11 +1,11 @@
 import java.time.Year;
 
 public class Film {
-    private String title;
-    private String director;
-    private int releaseYear;
-    private String genre;
-    private int duration; // duração em minutos
+    public String title;
+    public String director;
+    public int releaseYear;
+    public String genre;
+    public int duration; // duração em minutos
 
     public Film(String title, String director, int releaseYear, String genre, int duration) {
         setTitle(title);
