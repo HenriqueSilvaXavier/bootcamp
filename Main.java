@@ -66,7 +66,11 @@ public class Main {
                     break;
 
                 case 3:
-                    System.out.println(service.getFilms());
+                    List<Film> filmsEdit = service.getFilms();
+
+                    for (int i = 0; i < filmsEdit.size(); i++) {
+                        System.out.println(i + " - " + filmsEdit.get(i));
+                    }
                     System.out.print("Índice do filme: ");
                     int editIndex = scanner.nextInt();
                     scanner.nextLine();
@@ -95,7 +99,12 @@ public class Main {
                     break;
 
                 case 4:
-                    System.out.println(service.getFilms());
+                    filmsEdit = service.getFilms();
+
+                    for (int i = 0; i < filmsEdit.size(); i++) {
+                        System.out.println(i + " - " + filmsEdit.get(i));
+                    }
+
                     System.out.print("Índice do filme: ");
                     int index = scanner.nextInt();
                     scanner.nextLine();
