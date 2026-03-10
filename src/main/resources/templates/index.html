@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo de Filmes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container py-4">
+    <h1 class="mb-4">📚 Sistema de Catálogo de Filmes</h1>
+
+    <!-- Cadastrar Filme -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">➕ Cadastrar Filme</h5>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <input type="text" id="title" class="form-control" placeholder="Título">
+                </div>
+
+                <div class="col-md-6">
+                    <input type="text" id="director" class="form-control" placeholder="Diretor">
+                </div>
+
+                <div class="col-md-6">
+                    <input type="text" id="genre" class="form-control" placeholder="Gênero">
+                </div>
+
+                <div class="col-md-6">
+                    <input type="number" id="releaseYear" class="form-control" placeholder="Ano">
+                </div>
+
+                <div class="col-12">
+                    <input type="number" id="duration" class="form-control" placeholder="Duração (min)">
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary" onclick="cadastrarFilme()">
+                        Cadastrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buscar Filme -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">🔍 Buscar Filme por ID</h5>
+
+            <div class="input-group mb-3">
+                <input type="number" id="searchId" class="form-control" placeholder="ID do filme">
+                <button class="btn btn-secondary" onclick="buscarFilme()">Buscar</button>
+            </div>
+
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Diretor</th>
+                    <th>Gênero</th>
+                    <th>Ano</th>
+                    <th>Duração</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="searchedFilm"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Lista de Filmes -->
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title m-0">📚 Lista de Filmes</h5>
+                <button class="btn btn-success" onclick="listarFilmes()">Atualizar Lista</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Diretor</th>
+                        <th>Gênero</th>
+                        <th>Ano</th>
+                        <th>Duração</th>
+                        <th>Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody id="filmsTable"></tbody>
+                </table>
+            </div>
+
+            <!-- Paginação -->
+            <nav>
+                <ul class="pagination justify-content-center mt-3" id="paginacao"></ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = "http://localhost:8080/api/films";
+
+    let currentPage = 0;
+    const pageSize = 20;
+
+    function cadastrarFilme() {
+        const film = {
+            title: document.getElementById("title").value,
+            director: document.getElementById("director").value,
+            genre: document.getElementById("genre").value,
+            releaseYear: parseInt(document.getElementById("releaseYear").value),
+            duration: parseInt(document.getElementById("duration").value)
+        };
+
+        fetch(API, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(film)
+        })
+            .then(res => res.json())
+            .then(data => {
+                alert("Filme cadastrado! ID: " + data.id);
+                listarFilmes(currentPage);
+            });
+    }
+
+    function listarFilmes(page = 0) {
+        currentPage = page;
+
+        fetch(`${API}?page=${page}&size=${pageSize}`)
+            .then(res => res.json())
+            .then(data => {
+                const tabela = document.getElementById("filmsTable");
+                tabela.innerHTML = "";
+
+                data.content.forEach(film => {
+                    tabela.innerHTML += `
+                        <tr>
+                            <td>${film.id}</td>
+                            <td>${film.title}</td>
+                            <td>${film.director}</td>
+                            <td>${film.genre}</td>
+                            <td>${film.releaseYear}</td>
+                            <td>${film.duration}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarFilme(${film.id})">✏️</button>
+                                <button class="btn btn-sm btn-danger" onclick="deletarFilme(${film.id})">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                renderPaginacao(data.totalPages);
+            });
+    }
+
+    function renderPaginacao(totalPages) {
+        const paginacao = document.getElementById("paginacao");
+        paginacao.innerHTML = "";
+
+        for (let i = 0; i < totalPages; i++) {
+            paginacao.innerHTML += `
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <button class="page-link" onclick="listarFilmes(${i})">
+                        ${i + 1}
+                    </button>
+                </li>
+            `;
+        }
+    }
+
+    function buscarFilme() {
+        const id = document.getElementById("searchId").value;
+
+        fetch(`${API}/${id}`)
+            .then(res => res.json())
+            .then(film => {
+                const tbody = document.getElementById("searchedFilm");
+                tbody.innerHTML = `
+                    <tr>
+                        <td>${film.id}</td>
+                        <td>${film.title}</td>
+                        <td>${film.director}</td>
+                        <td>${film.genre}</td>
+                        <td>${film.releaseYear}</td>
+                        <td>${film.duration}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="editarFilme(${film.id})">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deletarFilme(${film.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+    }
+
+    function deletarFilme(id) {
+        if (!confirm("Tem certeza que deseja deletar este filme?")) return;
+
+        fetch(`${API}/${id}`, { method: "DELETE" })
+            .then(() => {
+                alert("Filme deletado!");
+                listarFilmes(currentPage);
+                document.getElementById("searchedFilm").innerHTML = "";
+            });
+    }
+
+    function editarFilme(id) {
+        window.location.href = `/edit?id=${id}`;
+    }
+
+    // carregar ao abrir a página
+    listarFilmes();
+</script>
+
+</body>
+</html>

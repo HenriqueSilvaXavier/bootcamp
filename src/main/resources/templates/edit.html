@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Filme</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+  <div class="card shadow">
+    <div class="card-body">
+      <h2 class="mb-4">✏️ Editar Filme</h2>
+
+      <form id="editForm">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Título</label>
+            <input type="text" id="title" class="form-control" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Diretor</label>
+            <input type="text" id="director" class="form-control" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Gênero</label>
+            <input type="text" id="genre" class="form-control" required>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Ano</label>
+            <input type="number" id="releaseYear" class="form-control" required>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Duração (min)</label>
+            <input type="number" id="duration" class="form-control" required>
+          </div>
+
+          <div class="col-12 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <a href="index.html" class="btn btn-secondary">Cancelar</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = "http://localhost:8080/api/films";
+
+  // Pega o ID da URL (?id=1)
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) {
+    alert("ID do filme não informado.");
+    window.location.href = "/";
+  }
+
+  // Carregar dados do filme
+  fetch(`${API}/${id}`)
+          .then(res => {
+            if (!res.ok) throw new Error("Filme não encontrado");
+            return res.json();
+          })
+          .then(film => {
+            document.getElementById("title").value = film.title;
+            document.getElementById("director").value = film.director;
+            document.getElementById("genre").value = film.genre;
+            document.getElementById("releaseYear").value = film.releaseYear;
+            document.getElementById("duration").value = film.duration;
+          })
+          .catch(() => {
+            alert("Erro ao carregar filme.");
+            window.location.href = "/";
+          });
+
+  // Enviar edição
+  const form = document.getElementById("editForm");
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const atualizado = {
+      title: document.getElementById("title").value,
+      director: document.getElementById("director").value,
+      genre: document.getElementById("genre").value,
+      releaseYear: parseInt(document.getElementById("releaseYear").value),
+      duration: parseInt(document.getElementById("duration").value)
+    };
+
+    fetch(`${API}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(atualizado)
+    })
+            .then(res => {
+              if (!res.ok) throw new Error();
+              return res.json();
+            })
+            .then(() => {
+              alert("Filme atualizado com sucesso!");
+              window.location.href = "/";
+            })
+            .catch(() => alert("Erro ao atualizar filme."));
+  });
+</script>
+
+</body>
+</html>
