@@ -1,13 +1,15 @@
 package com.example.bootcamp_films.controller;
 
+import com.example.bootcamp_films.dto.FilmMapper;
+import com.example.bootcamp_films.dto.request.FilmCreateDTO;
+import com.example.bootcamp_films.dto.request.FilmUpdateDTO;
+import com.example.bootcamp_films.dto.response.FilmResponseDTO;
 import com.example.bootcamp_films.entity.Film;
 import com.example.bootcamp_films.service.FilmService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -20,96 +22,105 @@ public class FilmController {
         this.service = service;
     }
 
+    // ==========================
+    // 🎬 Criar filme (POST)
+    // ==========================
     @PostMapping
-    public ResponseEntity<Film> create(@RequestBody Film film) {
-        Film salvo = service.createFilm(film);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+    public ResponseEntity<FilmResponseDTO> create(@RequestBody FilmCreateDTO dto) {
+        Film film = FilmMapper.toEntity(dto);
+        Film saved = service.createFilm(film);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(FilmMapper.toDTO(saved));
     }
 
+    // ==========================
+    // 📄 Listar filmes paginados (GET)
+    // ==========================
     @GetMapping
-    public ResponseEntity<Page<Film>> getFilmsPaged(
+    public ResponseEntity<Page<FilmResponseDTO>> getFilmsPaged(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ) {
-        return ResponseEntity.ok(service.getFilmsPaged(page, size));
+        Page<FilmResponseDTO> dtoPage = service.getFilmsPaged(page, size)
+                .map(FilmMapper::toDTO);
+        return ResponseEntity.ok(dtoPage);
     }
 
+    // ==========================
+    // 🔍 Obter filme por ID (GET)
+    // ==========================
     @GetMapping("/{id}")
-    public ResponseEntity<Film> getFilmById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getFilmById(id));
+    public ResponseEntity<FilmResponseDTO> getFilmById(@PathVariable Long id) {
+        Film film = service.getFilmById(id);
+        return ResponseEntity.ok(FilmMapper.toDTO(film));
     }
 
+    // ==========================
+    // ✏️ Atualizar filme completo (PUT)
+    // ==========================
     @PutMapping("/{id}")
-    public ResponseEntity<Film> update(
+    public ResponseEntity<FilmResponseDTO> update(
             @PathVariable Long id,
-            @RequestBody Film updatedFilm) {
+            @RequestBody FilmUpdateDTO dto) {
 
         Film film = service.getFilmById(id);
+        FilmMapper.updateEntity(film, dto);
 
-        film.setTitle(updatedFilm.getTitle());
-        film.setDirector(updatedFilm.getDirector());
-        film.setGenre(updatedFilm.getGenre());
-        film.setReleaseYear(updatedFilm.getReleaseYear());
-        film.setDuration(updatedFilm.getDuration());
-
-        return ResponseEntity.ok(service.updateFilm(film));
+        Film updated = service.updateFilm(film);
+        return ResponseEntity.ok(FilmMapper.toDTO(updated));
     }
 
+    // ==========================
+    // 🩹 Atualizações parciais (PATCH)
+    // ==========================
     @PatchMapping("/{id}/title")
-    public ResponseEntity<Film> updateTitle(
+    public ResponseEntity<FilmResponseDTO> updateTitle(
             @PathVariable Long id,
-            @RequestBody String title) {
-
+            @RequestBody FilmCreateDTO dto) { // usando CreateDTO apenas para title
         Film film = service.getFilmById(id);
-        film.setTitle(title);
-
-        return ResponseEntity.ok(service.updateFilm(film));
+        film.setTitle(dto.getTitle());
+        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
     }
 
     @PatchMapping("/{id}/director")
-    public ResponseEntity<Film> updateDirector(
+    public ResponseEntity<FilmResponseDTO> updateDirector(
             @PathVariable Long id,
-            @RequestBody String director) {
-
+            @RequestBody FilmCreateDTO dto) {
         Film film = service.getFilmById(id);
-        film.setDirector(director);
-
-        return ResponseEntity.ok(service.updateFilm(film));
+        film.setDirector(dto.getDirector());
+        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
     }
 
     @PatchMapping("/{id}/genre")
-    public ResponseEntity<Film> updateGenre(
+    public ResponseEntity<FilmResponseDTO> updateGenre(
             @PathVariable Long id,
-            @RequestBody String genre) {
-
+            @RequestBody FilmCreateDTO dto) {
         Film film = service.getFilmById(id);
-        film.setGenre(genre);
-
-        return ResponseEntity.ok(service.updateFilm(film));
+        film.setGenre(dto.getGenre());
+        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
     }
 
     @PatchMapping("/{id}/releaseYear")
-    public ResponseEntity<Film> updateReleaseYear(
+    public ResponseEntity<FilmResponseDTO> updateReleaseYear(
             @PathVariable Long id,
-            @RequestBody int releaseYear) {
-
+            @RequestBody FilmCreateDTO dto) {
         Film film = service.getFilmById(id);
-        film.setReleaseYear(releaseYear);
-
-        return ResponseEntity.ok(service.updateFilm(film));
+        film.setReleaseYear(dto.getReleaseYear());
+        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
     }
 
     @PatchMapping("/{id}/duration")
-    public ResponseEntity<Film> updateDuration(
+    public ResponseEntity<FilmResponseDTO> updateDuration(
             @PathVariable Long id,
-            @RequestBody int duration) {
-
+            @RequestBody FilmCreateDTO dto) {
         Film film = service.getFilmById(id);
-        film.setDuration(duration);
-
-        return ResponseEntity.ok(service.updateFilm(film));
+        film.setDuration(dto.getDuration());
+        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
     }
 
+    // ==========================
+    // ❌ Deletar filme (DELETE)
+    // ==========================
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteFilm(id);
