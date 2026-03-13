@@ -1,4 +1,4 @@
-package com.example.bootcamp_films.dto.request;
+package src.main.java.com.example.bootcamp_films.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

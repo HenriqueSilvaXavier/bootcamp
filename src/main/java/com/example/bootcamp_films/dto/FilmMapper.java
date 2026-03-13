@@ -1,7 +1,7 @@
 package com.example.bootcamp_films.dto;
 
-import com.example.bootcamp_films.dto.request.FilmCreateDTO;
-import com.example.bootcamp_films.dto.request.FilmUpdateDTO;
+import src.main.java.com.example.bootcamp_films.dto.request.FilmCreateDTO;
+import src.main.java.com.example.bootcamp_films.dto.request.FilmUpdateDTO;
 import com.example.bootcamp_films.dto.response.FilmResponseDTO;
 import com.example.bootcamp_films.entity.Film;
 

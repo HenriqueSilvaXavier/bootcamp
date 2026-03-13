@@ -9,14 +9,23 @@
 <body class="bg-light">
 
 <div class="container py-4">
-    <h1 class="mb-4">📚 Sistema de Catálogo de Filmes</h1>
+    <h1 class="mb-4">📚 Sistema de Catálogo</h1>
 
-    <!-- Cadastrar Filme -->
+    <!-- Cadastrar -->
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">➕ Cadastrar Filme</h5>
+            <h5 class="card-title">➕ Cadastrar</h5>
 
             <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label">Tipo</label>
+                    <select id="type" class="form-select" onchange="toggleTipo()">
+                        <option value="film">Filme</option>
+                        <option value="animation">Animação</option>
+                    </select>
+                </div>
+
                 <div class="col-md-6">
                     <input type="text" id="title" class="form-control" placeholder="Título">
                 </div>
@@ -33,27 +42,37 @@
                     <input type="number" id="releaseYear" class="form-control" placeholder="Ano">
                 </div>
 
-                <div class="col-12">
+                <div class="col-md-6">
                     <input type="number" id="duration" class="form-control" placeholder="Duração (min)">
                 </div>
 
+                <!-- Campos de Animação -->
+                <div id="animationFields" style="display:none" class="row g-3">
+                    <div class="col-md-6">
+                        <input type="text" id="animationStudio" class="form-control" placeholder="Estúdio de animação">
+                    </div>
+
+                    <div class="col-md-6 form-check mt-2 ms-2">
+                        <input class="form-check-input" type="checkbox" id="dubbed">
+                        <label class="form-check-label">Dublado</label>
+                    </div>
+                </div>
+
                 <div class="col-12">
-                    <button class="btn btn-primary" onclick="cadastrarFilme()">
-                        Cadastrar
-                    </button>
+                    <button class="btn btn-primary" onclick="cadastrar()">Cadastrar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Buscar Filme -->
+    <!-- Buscar por ID -->
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">🔍 Buscar Filme por ID</h5>
+            <h5 class="card-title">🔍 Buscar por ID</h5>
 
             <div class="input-group mb-3">
-                <input type="number" id="searchId" class="form-control" placeholder="ID do filme">
-                <button class="btn btn-secondary" onclick="buscarFilme()">Buscar</button>
+                <input type="number" id="searchId" class="form-control" placeholder="ID">
+                <button class="btn btn-secondary" onclick="buscarPorId()">Buscar</button>
             </div>
 
             <table class="table table-striped table-hover align-middle">
@@ -68,17 +87,17 @@
                     <th>Ações</th>
                 </tr>
                 </thead>
-                <tbody id="searchedFilm"></tbody>
+                <tbody id="searchedTable"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- Lista de Filmes -->
+    <!-- Lista -->
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title m-0">📚 Lista de Filmes</h5>
-                <button class="btn btn-success" onclick="listarFilmes()">Atualizar Lista</button>
+                <h5 class="card-title m-0">📚 Lista Completa</h5>
+                <button class="btn btn-success" onclick="listarTudo()">Atualizar</button>
             </div>
 
             <div class="table-responsive">
@@ -94,131 +113,156 @@
                         <th>Ações</th>
                     </tr>
                     </thead>
-                    <tbody id="filmsTable"></tbody>
+                    <tbody id="listaTable"></tbody>
                 </table>
             </div>
-
-            <!-- Paginação -->
-            <nav>
-                <ul class="pagination justify-content-center mt-3" id="paginacao"></ul>
-            </nav>
         </div>
     </div>
 </div>
 
 <script>
-    const API = "http://localhost:8080/api/films";
+    const FILM_API = "http://localhost:8080/api/films";
+    const ANIMATION_API = "http://localhost:8080/api/animations";
 
-    let currentPage = 0;
-    const pageSize = 20;
+    const PAGE_SIZE = 5;
+    let filmPage = 0;
+    let animationPage = 0;
 
-    function cadastrarFilme() {
-        const film = {
-            title: document.getElementById("title").value,
-            director: document.getElementById("director").value,
-            genre: document.getElementById("genre").value,
-            releaseYear: parseInt(document.getElementById("releaseYear").value),
-            duration: parseInt(document.getElementById("duration").value)
+    function toggleTipo() {
+        animationFields.style.display =
+            type.value === "animation" ? "flex" : "none";
+    }
+
+    function cadastrar() {
+        const tipo = type.value;
+
+        const base = {
+            title: title.value,
+            director: director.value,
+            genre: genre.value,
+            releaseYear: parseInt(releaseYear.value),
+            duration: parseInt(duration.value)
         };
 
-        fetch(API, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(film)
-        })
-            .then(res => res.json())
-            .then(data => {
-                alert("Filme cadastrado! ID: " + data.id);
-                listarFilmes(currentPage);
-            });
-    }
+        let url = FILM_API;
+        let body = base;
 
-    function listarFilmes(page = 0) {
-        currentPage = page;
-
-        fetch(`${API}?page=${page}&size=${pageSize}`)
-            .then(res => res.json())
-            .then(data => {
-                const tabela = document.getElementById("filmsTable");
-                tabela.innerHTML = "";
-
-                data.content.forEach(film => {
-                    tabela.innerHTML += `
-                        <tr>
-                            <td>${film.id}</td>
-                            <td>${film.title}</td>
-                            <td>${film.director}</td>
-                            <td>${film.genre}</td>
-                            <td>${film.releaseYear}</td>
-                            <td>${film.duration}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" onclick="editarFilme(${film.id})">✏️</button>
-                                <button class="btn btn-sm btn-danger" onclick="deletarFilme(${film.id})">🗑️</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                renderPaginacao(data.totalPages);
-            });
-    }
-
-    function renderPaginacao(totalPages) {
-        const paginacao = document.getElementById("paginacao");
-        paginacao.innerHTML = "";
-
-        for (let i = 0; i < totalPages; i++) {
-            paginacao.innerHTML += `
-                <li class="page-item ${i === currentPage ? 'active' : ''}">
-                    <button class="page-link" onclick="listarFilmes(${i})">
-                        ${i + 1}
-                    </button>
-                </li>
-            `;
+        if (tipo === "animation") {
+            url = ANIMATION_API;
+            body = {
+                ...base,
+                animationStudio: animationStudio.value,
+                dubbed: dubbed.checked
+            };
         }
-    }
 
-    function buscarFilme() {
-        const id = document.getElementById("searchId").value;
-
-        fetch(`${API}/${id}`)
-            .then(res => res.json())
-            .then(film => {
-                const tbody = document.getElementById("searchedFilm");
-                tbody.innerHTML = `
-                    <tr>
-                        <td>${film.id}</td>
-                        <td>${film.title}</td>
-                        <td>${film.director}</td>
-                        <td>${film.genre}</td>
-                        <td>${film.releaseYear}</td>
-                        <td>${film.duration}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="editarFilme(${film.id})">✏️</button>
-                            <button class="btn btn-sm btn-danger" onclick="deletarFilme(${film.id})">🗑️</button>
-                        </td>
-                    </tr>
-                `;
+        fetch(url, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(body)
+        })
+            .then(r => r.json())
+            .then(d => {
+                alert("Cadastrado! ID: " + d.id);
+                listarTudo();
             });
     }
 
-    function deletarFilme(id) {
-        if (!confirm("Tem certeza que deseja deletar este filme?")) return;
+    function listarTudo() {
+        listaTable.innerHTML = "";
+        listarFilmes();
+        listarAnimacoes();
+    }
 
-        fetch(`${API}/${id}`, { method: "DELETE" })
+    function listarFilmes() {
+        fetch(`${FILM_API}?page=${filmPage}&size=${PAGE_SIZE}`)
+            .then(r => r.json())
+            .then(data => renderLista(data.content, "film"));
+    }
+
+    function listarAnimacoes() {
+        fetch(`${ANIMATION_API}?page=${animationPage}&size=${PAGE_SIZE}`)
+            .then(r => r.json())
+            .then(data => renderLista(data.content, "animation"));
+    }
+
+    function renderLista(lista, tipo) {
+        lista.forEach(item => {
+            const extra = tipo === "animation"
+                ? `<br><small>🎞️ ${item.animationStudio} | ${item.dubbed ? 'Dublado' : 'Legendado'}</small>`
+                : `<br><small>🎬 Filme</small>`;
+
+            listaTable.innerHTML += `
+            <tr>
+                <td>${item.id}</td>
+                <td>${item.title}${extra}</td>
+                <td>${item.director}</td>
+                <td>${item.genre}</td>
+                <td>${item.releaseYear}</td>
+                <td>${item.duration}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="editar(${item.id}, '${tipo}')">✏️</button>
+                    <button class="btn btn-sm btn-danger" onclick="deletar(${item.id}, '${tipo}')">🗑️</button>
+                </td>
+            </tr>
+        `;
+        });
+    }
+
+    function buscarPorId() {
+        const id = searchId.value;
+        searchedTable.innerHTML = "";
+
+        fetch(`${FILM_API}/${id}`)
+            .then(r => r.ok ? r.json() : Promise.reject())
+            .then(item => renderBusca(item, "film"))
+            .catch(() => {
+                fetch(`${ANIMATION_API}/${id}`)
+                    .then(r => r.ok ? r.json() : Promise.reject())
+                    .then(item => renderBusca(item, "animation"))
+                    .catch(() => alert("Item não encontrado"));
+            });
+    }
+
+    function renderBusca(item, tipo) {
+        const extra = tipo === "animation"
+            ? `<br><small>🎞️ ${item.animationStudio} | ${item.dubbed ? 'Dublado' : 'Legendado'}</small>`
+            : `<br><small>🎬 Filme</small>`;
+
+        searchedTable.innerHTML = `
+        <tr>
+            <td>${item.id}</td>
+            <td>${item.title}${extra}</td>
+            <td>${item.director}</td>
+            <td>${item.genre}</td>
+            <td>${item.releaseYear}</td>
+            <td>${item.duration}</td>
+            <td>
+                <button class="btn btn-sm btn-primary" onclick="editar(${item.id}, '${tipo}')">✏️</button>
+                <button class="btn btn-sm btn-danger" onclick="deletar(${item.id}, '${tipo}')">🗑️</button>
+            </td>
+        </tr>
+    `;
+    }
+
+    function deletar(id, tipo) {
+        if (!confirm("Tem certeza?")) return;
+
+        const api = tipo === "animation" ? ANIMATION_API : FILM_API;
+
+        fetch(`${api}/${id}`, { method: "DELETE" })
             .then(() => {
-                alert("Filme deletado!");
-                listarFilmes(currentPage);
-                document.getElementById("searchedFilm").innerHTML = "";
+                alert("Deletado!");
+                listarTudo();
+                searchedTable.innerHTML = "";
             });
     }
 
-    function editarFilme(id) {
-        window.location.href = `/edit?id=${id}`;
+    function editar(id, tipo) {
+        window.location.href = `edit?id=${id}&type=${tipo}`;
     }
 
-    // carregar ao abrir a página
-    listarFilmes();
+    listarTudo();
 </script>
 
 </body>

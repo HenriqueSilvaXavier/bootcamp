@@ -1,8 +1,8 @@
 package com.example.bootcamp_films.controller;
 
 import com.example.bootcamp_films.dto.FilmMapper;
-import com.example.bootcamp_films.dto.request.FilmCreateDTO;
-import com.example.bootcamp_films.dto.request.FilmUpdateDTO;
+import src.main.java.com.example.bootcamp_films.dto.request.FilmCreateDTO;
+import src.main.java.com.example.bootcamp_films.dto.request.FilmUpdateDTO;
 import com.example.bootcamp_films.dto.response.FilmResponseDTO;
 import com.example.bootcamp_films.entity.Film;
 import com.example.bootcamp_films.service.FilmService;
@@ -68,54 +68,6 @@ public class FilmController {
 
         Film updated = service.updateFilm(film);
         return ResponseEntity.ok(FilmMapper.toDTO(updated));
-    }
-
-    // ==========================
-    // 🩹 Atualizações parciais (PATCH)
-    // ==========================
-    @PatchMapping("/{id}/title")
-    public ResponseEntity<FilmResponseDTO> updateTitle(
-            @PathVariable Long id,
-            @RequestBody FilmCreateDTO dto) { // usando CreateDTO apenas para title
-        Film film = service.getFilmById(id);
-        film.setTitle(dto.getTitle());
-        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
-    }
-
-    @PatchMapping("/{id}/director")
-    public ResponseEntity<FilmResponseDTO> updateDirector(
-            @PathVariable Long id,
-            @RequestBody FilmCreateDTO dto) {
-        Film film = service.getFilmById(id);
-        film.setDirector(dto.getDirector());
-        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
-    }
-
-    @PatchMapping("/{id}/genre")
-    public ResponseEntity<FilmResponseDTO> updateGenre(
-            @PathVariable Long id,
-            @RequestBody FilmCreateDTO dto) {
-        Film film = service.getFilmById(id);
-        film.setGenre(dto.getGenre());
-        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
-    }
-
-    @PatchMapping("/{id}/releaseYear")
-    public ResponseEntity<FilmResponseDTO> updateReleaseYear(
-            @PathVariable Long id,
-            @RequestBody FilmCreateDTO dto) {
-        Film film = service.getFilmById(id);
-        film.setReleaseYear(dto.getReleaseYear());
-        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
-    }
-
-    @PatchMapping("/{id}/duration")
-    public ResponseEntity<FilmResponseDTO> updateDuration(
-            @PathVariable Long id,
-            @RequestBody FilmCreateDTO dto) {
-        Film film = service.getFilmById(id);
-        film.setDuration(dto.getDuration());
-        return ResponseEntity.ok(FilmMapper.toDTO(service.updateFilm(film)));
     }
 
     // ==========================
