@@ -2,19 +2,19 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editar Filme</title>
+  <title>Editar</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
 
+<body class="bg-light">
 <div class="container py-5">
   <div class="card shadow">
     <div class="card-body">
-      <h2 class="mb-4">✏️ Editar Filme</h2>
+      <h2 class="mb-4">Editar</h2>
 
       <form id="editForm">
         <div class="row g-3">
+
           <div class="col-md-6">
             <label class="form-label">Título</label>
             <input type="text" id="title" class="form-control" required>
@@ -36,14 +36,36 @@
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Duração (min)</label>
+            <label class="form-label">Duração</label>
             <input type="number" id="duration" class="form-control" required>
           </div>
 
-          <div class="col-12 d-flex gap-2">
-            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <a href="index.html" class="btn btn-secondary">Cancelar</a>
+          <!-- 🎬 Animação -->
+          <div id="animationFields" style="display:none" class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Estúdio</label>
+              <input type="text" id="animationStudio" class="form-control">
+            </div>
+
+            <div class="col-md-6 form-check mt-4 ms-2">
+              <input class="form-check-input" type="checkbox" id="dubbed">
+              <label class="form-check-label">Dublado</label>
+            </div>
           </div>
+
+          <!-- 🎥 Documentário -->
+          <div id="documentaryFields" style="display:none" class="row g-3">
+            <div class="col-md-6 form-check mt-4 ms-2">
+              <input class="form-check-input" type="checkbox" id="narrated">
+              <label class="form-check-label">É narrado</label>
+            </div>
+          </div>
+
+          <div class="col-12 d-flex gap-2">
+            <button class="btn btn-primary">Salvar</button>
+            <a href="/" class="btn btn-secondary">Cancelar</a>
+          </div>
+
         </div>
       </form>
     </div>
@@ -51,62 +73,100 @@
 </div>
 
 <script>
-  const API = "http://localhost:8080/api/films";
+  const FILM_API = "http://localhost:5002/api/films";
+  const ANIMATION_API = "http://localhost:5002/api/animations";
+  const DOCUMENTARY_API = "http://localhost:5002/api/documentaries";
 
-  // Pega o ID da URL (?id=1)
+  const title = document.getElementById("title");
+  const director = document.getElementById("director");
+  const genre = document.getElementById("genre");
+  const releaseYear = document.getElementById("releaseYear");
+  const duration = document.getElementById("duration");
+
+  const animationStudio = document.getElementById("animationStudio");
+  const dubbed = document.getElementById("dubbed");
+  const narrated = document.getElementById("narrated");
+
+  const animationFields = document.getElementById("animationFields");
+  const documentaryFields = document.getElementById("documentaryFields");
+  const editForm = document.getElementById("editForm");
+
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
+  const type = params.get("type");
 
-  if (!id) {
-    alert("ID do filme não informado.");
+  if (!id || !type) {
+    alert("Parâmetros inválidos");
     window.location.href = "/";
   }
 
-  // Carregar dados do filme
+  /* Define API correta */
+  let API = FILM_API;
+  if (type === "animation") API = ANIMATION_API;
+  if (type === "documentary") API = DOCUMENTARY_API;
+
+  /* Mostra campos específicos */
+  if (type === "animation") animationFields.style.display = "flex";
+  if (type === "documentary") documentaryFields.style.display = "flex";
+
+  /* Carrega dados */
   fetch(`${API}/${id}`)
-          .then(res => {
-            if (!res.ok) throw new Error("Filme não encontrado");
-            return res.json();
-          })
-          .then(film => {
-            document.getElementById("title").value = film.title;
-            document.getElementById("director").value = film.director;
-            document.getElementById("genre").value = film.genre;
-            document.getElementById("releaseYear").value = film.releaseYear;
-            document.getElementById("duration").value = film.duration;
-          })
-          .catch(() => {
-            alert("Erro ao carregar filme.");
-            window.location.href = "/";
+          .then(r => r.json())
+          .then(item => {
+            title.value = item.title;
+            director.value = item.director;
+            genre.value = item.genre;
+            releaseYear.value = item.releaseYear;
+            duration.value = item.duration;
+
+            if (type === "animation") {
+              animationStudio.value = item.animationStudio;
+              dubbed.checked = item.dubbed;
+            }
+
+            if (type === "documentary") {
+              narrated.checked = item.narrated;
+            }
           });
 
-  // Enviar edição
-  const form = document.getElementById("editForm");
-  form.addEventListener("submit", function(e) {
+  /* Salvar */
+  editForm.addEventListener("submit", e => {
     e.preventDefault();
 
-    const atualizado = {
-      title: document.getElementById("title").value,
-      director: document.getElementById("director").value,
-      genre: document.getElementById("genre").value,
-      releaseYear: parseInt(document.getElementById("releaseYear").value),
-      duration: parseInt(document.getElementById("duration").value)
+    const base = {
+      title: title.value,
+      director: director.value,
+      genre: genre.value,
+      releaseYear: parseInt(releaseYear.value),
+      duration: parseInt(duration.value)
     };
+
+    let body = base;
+
+    if (type === "animation") {
+      body = {
+        ...base,
+        animationStudio: animationStudio.value,
+        dubbed: dubbed.checked
+      };
+    }
+
+    if (type === "documentary") {
+      body = {
+        ...base,
+        narrated: narrated.checked
+      };
+    }
 
     fetch(`${API}/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(atualizado)
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(body)
     })
-            .then(res => {
-              if (!res.ok) throw new Error();
-              return res.json();
-            })
             .then(() => {
-              alert("Filme atualizado com sucesso!");
+              alert("Atualizado!");
               window.location.href = "/";
-            })
-            .catch(() => alert("Erro ao atualizar filme."));
+            });
   });
 </script>
 
