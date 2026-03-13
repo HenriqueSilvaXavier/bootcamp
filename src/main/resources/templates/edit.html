@@ -40,7 +40,7 @@
             <input type="number" id="duration" class="form-control" required>
           </div>
 
-          <!-- Animação -->
+          <!-- 🎬 Animação -->
           <div id="animationFields" style="display:none" class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Estúdio</label>
@@ -50,6 +50,14 @@
             <div class="col-md-6 form-check mt-4 ms-2">
               <input class="form-check-input" type="checkbox" id="dubbed">
               <label class="form-check-label">Dublado</label>
+            </div>
+          </div>
+
+          <!-- 🎥 Documentário -->
+          <div id="documentaryFields" style="display:none" class="row g-3">
+            <div class="col-md-6 form-check mt-4 ms-2">
+              <input class="form-check-input" type="checkbox" id="narrated">
+              <label class="form-check-label">É narrado</label>
             </div>
           </div>
 
@@ -65,8 +73,23 @@
 </div>
 
 <script>
-  const FILM_API = "http://localhost:8080/api/films";
-  const ANIMATION_API = "http://localhost:8080/api/animations";
+  const FILM_API = "http://localhost:5002/api/films";
+  const ANIMATION_API = "http://localhost:5002/api/animations";
+  const DOCUMENTARY_API = "http://localhost:5002/api/documentaries";
+
+  const title = document.getElementById("title");
+  const director = document.getElementById("director");
+  const genre = document.getElementById("genre");
+  const releaseYear = document.getElementById("releaseYear");
+  const duration = document.getElementById("duration");
+
+  const animationStudio = document.getElementById("animationStudio");
+  const dubbed = document.getElementById("dubbed");
+  const narrated = document.getElementById("narrated");
+
+  const animationFields = document.getElementById("animationFields");
+  const documentaryFields = document.getElementById("documentaryFields");
+  const editForm = document.getElementById("editForm");
 
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
@@ -77,12 +100,16 @@
     window.location.href = "/";
   }
 
-  const API = type === "animation" ? ANIMATION_API : FILM_API;
+  /* Define API correta */
+  let API = FILM_API;
+  if (type === "animation") API = ANIMATION_API;
+  if (type === "documentary") API = DOCUMENTARY_API;
 
-  if (type === "animation") {
-    animationFields.style.display = "flex";
-  }
+  /* Mostra campos específicos */
+  if (type === "animation") animationFields.style.display = "flex";
+  if (type === "documentary") documentaryFields.style.display = "flex";
 
+  /* Carrega dados */
   fetch(`${API}/${id}`)
           .then(r => r.json())
           .then(item => {
@@ -96,8 +123,13 @@
               animationStudio.value = item.animationStudio;
               dubbed.checked = item.dubbed;
             }
+
+            if (type === "documentary") {
+              narrated.checked = item.narrated;
+            }
           });
 
+  /* Salvar */
   editForm.addEventListener("submit", e => {
     e.preventDefault();
 
@@ -116,6 +148,13 @@
         ...base,
         animationStudio: animationStudio.value,
         dubbed: dubbed.checked
+      };
+    }
+
+    if (type === "documentary") {
+      body = {
+        ...base,
+        narrated: narrated.checked
       };
     }
 

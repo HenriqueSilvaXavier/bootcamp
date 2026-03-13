@@ -2,51 +2,37 @@ package com.example.bootcamp_films.service;
 
 import com.example.bootcamp_films.entity.Animation;
 import com.example.bootcamp_films.repository.AnimationRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
-import java.util.List;
+import org.springframework.stereotype.Service;
+import com.example.bootcamp_films.service.BaseServiceImplementation;
 
 @Service
-public class AnimationService {
+public class AnimationService extends BaseServiceImplementation<Animation> {
 
-    private final AnimationRepository repository;
+    private final AnimationRepository animationRepository;
 
-    public AnimationService(AnimationRepository repository) {
-        this.repository = repository;
+    public AnimationService(AnimationRepository animationRepository) {
+        super(animationRepository);
+        this.animationRepository = animationRepository;
     }
 
-    public Animation create(Animation animation) {
-        return repository.save(animation);
+    @Override
+    public Animation update(Long id, Animation entity) {
+        Animation existing = findById(id);
+
+        // Campos obrigatórios
+        existing.setTitle(entity.getTitle());
+        existing.setDirector(entity.getDirector());
+        existing.setReleaseYear(entity.getReleaseYear());
+        existing.setGenre(entity.getGenre());
+        existing.setDuration(entity.getDuration());
+        existing.setAnimationStudio(entity.getAnimationStudio());
+        existing.setDubbed(entity.getDubbed());
+        return animationRepository.save(existing);
     }
 
-    public Page<Animation> listPaged(int page, int size) {
-        return repository.findAll(PageRequest.of(page, size));
-    }
-
-    public Animation findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Animação não encontrada"));
-    }
-
-    public Animation update(Long id, Animation updated) {
-        Animation animation = findById(id);
-
-        animation.setAnimationStudio(updated.getAnimationStudio());
-        animation.setDubbed(updated.isDubbed());
-
-        // campos herdados de Film
-        animation.setTitle(updated.getTitle());
-        animation.setDirector(updated.getDirector());
-        animation.setReleaseYear(updated.getReleaseYear());
-        animation.setGenre(updated.getGenre());
-        animation.setDuration(updated.getDuration());
-
-        return repository.save(animation);
-    }
-
-    public void delete(Long id) {
-        repository.deleteById(id);
+    @Override
+    public Page<Animation> findAll(int page, int size) {
+        return animationRepository.findAll(org.springframework.data.domain.PageRequest.of(page, size));
     }
 }

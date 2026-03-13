@@ -1,39 +1,43 @@
 package com.example.bootcamp_films.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import com.example.bootcamp_films.entity.AbstractFilm;
 
-@Getter
 @NoArgsConstructor
 @Entity
-public class Animation extends Film {
+public class Animation extends AbstractFilm {
 
+    @Column(nullable = false)
     private String animationStudio;
-    private boolean dubbed;
 
-    public Animation(
-            String title,
-            String director,
-            int releaseYear,
-            String genre,
-            int duration,
-            String animationStudio,
-            boolean dubbed
-    ) {
+    @Column(nullable = false)
+    private Boolean dubbed;
+
+    public Animation(String title, String director, int releaseYear, String genre,
+                     int duration, String animationStudio, boolean dubbed) {
         super(title, director, releaseYear, genre, duration);
-        setAnimationStudio(animationStudio);
+        this.animationStudio = animationStudio;
         this.dubbed = dubbed;
     }
 
+    public String getAnimationStudio() {
+        return animationStudio;
+    }
+
     public void setAnimationStudio(String animationStudio) {
-        if (animationStudio == null || animationStudio.trim().isEmpty()) {
-            throw new IllegalArgumentException("Estúdio não pode ser vazio.");
+        if (animationStudio == null || animationStudio.isBlank()) {
+            throw new IllegalArgumentException("Estúdio não pode ser vazio");
         }
         this.animationStudio = animationStudio;
     }
 
-    public void setDubbed(boolean dubbed) {
+    public Boolean getDubbed() {
+        return dubbed;
+    }
+
+    public void setDubbed(Boolean dubbed) {
         this.dubbed = dubbed;
     }
 }
