@@ -12,6 +12,8 @@
 
     <!-- Create / Edit -->
     <div class="card mb-4">
+        <!-- Error Alert -->
+        <div id="errorAlert" class="alert alert-danger d-none" role="alert"></div>
         <div class="card-body">
             <h5 class="card-title">Register</h5>
 
@@ -166,6 +168,7 @@
     }
 
     function create() {
+        hideError(); // esconde alerta antigo
         const type = typeSelect.value;
 
         const base = {
@@ -191,16 +194,22 @@
             headers: {"Content-Type":"application/json"},
             body: JSON.stringify(body)
         })
-            .then(r => {
-                if (!r.ok) throw new Error("Error while creating");
+            .then(async r => {
+                if (!r.ok) {
+                    const error = await r.json().catch(() => null);
+                    throw new Error(error?.message || "Unknown error");
+                }
                 return r.json();
             })
             .then(data => {
+                // Mostrar alerta de sucesso, se quiser
                 alert("Added! ID: " + (data.id ?? "N/A"));
+
+                // Atualiza as tabelas
                 listAnimations();
                 listDocumentaries();
             })
-            .catch(e => alert(e.message));
+            .catch(e => showError(e.message));
     }
 
     function edit(id, type) {
@@ -384,6 +393,18 @@
         listAnimations();
         listDocumentaries();
     };
+
+    function showError(message) {
+        const alertDiv = document.getElementById("errorAlert");
+        alertDiv.textContent = message; // mostra o texto do backend
+        alertDiv.classList.remove("d-none");
+    }
+
+    function hideError() {
+        const alertDiv = document.getElementById("errorAlert");
+        alertDiv.classList.add("d-none");
+        alertDiv.textContent = "";
+    }
 </script>
 
 </body>

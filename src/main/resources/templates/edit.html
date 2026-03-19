@@ -12,6 +12,8 @@
     <div class="card-body">
       <h2 class="mb-4">Edit</h2>
 
+      <div id="errorAlert" class="alert alert-danger d-none" role="alert"></div>
+
       <form id="editForm">
         <div class="row g-3">
 
@@ -130,8 +132,14 @@
           });
 
   /* Save */
+  const errorAlert = document.getElementById("errorAlert");
+
+  /* Save */
   editForm.addEventListener("submit", e => {
     e.preventDefault();
+
+    errorAlert.classList.add("d-none");
+    errorAlert.textContent = "";
 
     const base = {
       title: title.value,
@@ -144,18 +152,11 @@
     let body = base;
 
     if (type === "animation") {
-      body = {
-        ...base,
-        animationStudio: animationStudio.value,
-        dubbed: dubbed.checked
-      };
+      body = { ...base, animationStudio: animationStudio.value, dubbed: dubbed.checked };
     }
 
     if (type === "documentary") {
-      body = {
-        ...base,
-        narrated: narrated.checked
-      };
+      body = { ...base, narrated: narrated.checked };
     }
 
     fetch(`${API}/${id}`, {
@@ -163,9 +164,20 @@
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify(body)
     })
+            .then(async r => {
+              if (!r.ok) {
+                const error = await r.json().catch(() => null);
+                throw new Error(error?.message || "Unknown error");
+              }
+              return r.json();
+            })
             .then(() => {
               alert("Updated!");
               window.location.href = "/";
+            })
+            .catch(e => {
+              errorAlert.textContent = e.message;
+              errorAlert.classList.remove("d-none");
             });
   });
 </script>

@@ -28,7 +28,7 @@ public class Animation extends AbstractFilm {
 
     public void setAnimationStudio(String animationStudio) {
         if (animationStudio == null || animationStudio.isBlank()) {
-            throw new IllegalArgumentException("Estúdio não pode ser vazio");
+            throw new IllegalArgumentException("Studio can not be null.");
         }
         this.animationStudio = animationStudio;
     }
