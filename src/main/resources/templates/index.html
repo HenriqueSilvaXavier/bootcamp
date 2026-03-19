@@ -132,8 +132,8 @@
 </div>
 
 <script>
-    const ANIMATION_API = "http://localhost:5002/api/animations";
-    const DOCUMENTARY_API = "http://localhost:5002/api/documentaries";
+    const ANIMATION_API = "http://localhost:8080/api/animations";
+    const DOCUMENTARY_API = "http://localhost:8080/api/documentaries";
 
     let editandoId = null;
     let editandoTipo = null;
@@ -191,11 +191,16 @@
             headers: {"Content-Type":"application/json"},
             body: JSON.stringify(body)
         })
-            .then(r => r.json())
-            .then(() => {
+            .then(r => {
+                if (!r.ok) throw new Error("Erro ao cadastrar");
+                return r.json();
+            })
+            .then(data => {
+                alert("Adicionado! ID: " + (data.id ?? "N/A"));
                 listarAnimacoes();
                 listarDocumentarios();
-            });
+            })
+            .catch(e => alert(e.message));
     }
 
     function editar(id, tipo) {
