@@ -168,7 +168,7 @@
     }
 
     function create() {
-        hideError(); // esconde alerta antigo
+        hideError();
         const type = typeSelect.value;
 
         const base = {
@@ -202,10 +202,8 @@
                 return r.json();
             })
             .then(data => {
-                // Mostrar alerta de sucesso, se quiser
                 alert("Added! ID: " + (data.id ?? "N/A"));
 
-                // Atualiza as tabelas
                 listAnimations();
                 listDocumentaries();
             })
@@ -396,7 +394,7 @@
 
     function showError(message) {
         const alertDiv = document.getElementById("errorAlert");
-        alertDiv.textContent = message; // mostra o texto do backend
+        alertDiv.textContent = message;
         alertDiv.classList.remove("d-none");
     }
 
