@@ -1,98 +1,98 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Catálogo de Animações e Documentários</title>
+    <title>Animation and Documentary Catalog</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
 <div class="container py-4">
-    <h1 class="mb-4">Sistema de Catálogo</h1>
+    <h1 class="mb-4">Catalog System</h1>
 
-    <!-- Cadastrar / Editar -->
+    <!-- Create / Edit -->
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Cadastrar</h5>
+            <h5 class="card-title">Register</h5>
 
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label">Tipo</label>
-                    <select id="type" class="form-select" onchange="toggleTipo()">
-                        <option value="animation">Animação</option>
-                        <option value="documentary">Documentário</option>
+                    <label class="form-label">Type</label>
+                    <select id="type" class="form-select" onchange="toggleType()">
+                        <option value="animation">Animation</option>
+                        <option value="documentary">Documentary</option>
                     </select>
                 </div>
 
                 <div class="col-md-6">
-                    <input type="text" id="title" class="form-control" placeholder="Título">
+                    <input type="text" id="title" class="form-control" placeholder="Title">
                 </div>
 
                 <div class="col-md-6">
-                    <input type="text" id="director" class="form-control" placeholder="Diretor">
+                    <input type="text" id="director" class="form-control" placeholder="Director">
                 </div>
 
                 <div class="col-md-6">
-                    <input type="text" id="genre" class="form-control" placeholder="Gênero">
+                    <input type="text" id="genre" class="form-control" placeholder="Genre">
                 </div>
 
                 <div class="col-md-6">
-                    <input type="number" id="releaseYear" class="form-control" placeholder="Ano">
+                    <input type="number" id="releaseYear" class="form-control" placeholder="Year">
                 </div>
 
                 <div class="col-md-6">
-                    <input type="number" id="duration" class="form-control" placeholder="Duração (min)">
+                    <input type="number" id="duration" class="form-control" placeholder="Duration (min)">
                 </div>
 
-                <!-- Campos de Animação -->
+                <!-- Animation Fields -->
                 <div id="animationFields" style="display:none" class="row g-3">
                     <div class="col-md-6">
-                        <input type="text" id="animationStudio" class="form-control" placeholder="Estúdio de animação">
+                        <input type="text" id="animationStudio" class="form-control" placeholder="Animation Studio">
                     </div>
                     <div class="col-md-6 form-check mt-2 ms-2">
                         <input class="form-check-input" type="checkbox" id="dubbed">
-                        <label class="form-check-label">Dublado</label>
+                        <label class="form-check-label">Dubbed</label>
                     </div>
                 </div>
 
-                <!-- Campos de Documentário -->
+                <!-- Documentary Fields -->
                 <div id="documentaryFields" style="display:none" class="row g-3">
                     <div class="col-md-6 form-check mt-2 ms-2">
                         <input class="form-check-input" type="checkbox" id="narrated">
-                        <label class="form-check-label">É narrado</label>
+                        <label class="form-check-label">Narrated</label>
                     </div>
                 </div>
 
                 <div class="col-12">
-                    <button id="btnSalvar" class="btn btn-primary" onclick="salvar()">Cadastrar</button>
+                    <button id="btnSave" class="btn btn-primary" onclick="save()">Register</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 🎞️ Animações -->
+    <!-- Animations -->
     <div class="card mb-4">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="m-0">Animações</h5>
+                <h5 class="m-0">Animations</h5>
                 <div class="input-group w-auto">
-                    <input type="number" id="searchAnimationId" class="form-control" placeholder="Buscar por ID">
-                    <button class="btn btn-secondary" onclick="buscarPorId('animation')">Buscar</button>
-                    <button class="btn btn-success" onclick="listarAnimacoes()">Atualizar</button>
+                    <input type="number" id="searchAnimationId" class="form-control" placeholder="Search by ID">
+                    <button class="btn btn-secondary" onclick="searchById('animation')">Search</button>
+                    <button class="btn btn-success" onclick="listAnimations()">Refresh</button>
                 </div>
             </div>
             <table class="table table-striped table-hover align-middle">
                 <thead class="table-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Título</th>
-                    <th>Diretor</th>
-                    <th>Gênero</th>
-                    <th>Ano</th>
-                    <th>Duração</th>
-                    <th>Estúdio</th>
-                    <th>Dublado</th>
-                    <th>Ações</th>
+                    <th>Title</th>
+                    <th>Director</th>
+                    <th>Genre</th>
+                    <th>Year</th>
+                    <th>Duration</th>
+                    <th>Studio</th>
+                    <th>Dubbed</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody id="animationTable"></tbody>
@@ -100,28 +100,28 @@
         </div>
     </div>
 
-    <!-- 📽️ Documentários -->
+    <!-- Documentaries -->
     <div class="card mb-4">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="m-0">Documentários</h5>
+                <h5 class="m-0">Documentaries</h5>
                 <div class="input-group w-auto">
-                    <input type="number" id="searchDocumentaryId" class="form-control" placeholder="Buscar por ID">
-                    <button class="btn btn-secondary" onclick="buscarPorId('documentary')">Buscar</button>
-                    <button class="btn btn-success" onclick="listarDocumentarios()">Atualizar</button>
+                    <input type="number" id="searchDocumentaryId" class="form-control" placeholder="Search by ID">
+                    <button class="btn btn-secondary" onclick="searchById('documentary')">Search</button>
+                    <button class="btn btn-success" onclick="listDocumentaries()">Refresh</button>
                 </div>
             </div>
             <table class="table table-striped table-hover align-middle">
                 <thead class="table-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Título</th>
-                    <th>Diretor</th>
-                    <th>Gênero</th>
-                    <th>Ano</th>
-                    <th>Duração</th>
-                    <th>Narrado</th>
-                    <th>Ações</th>
+                    <th>Title</th>
+                    <th>Director</th>
+                    <th>Genre</th>
+                    <th>Year</th>
+                    <th>Duration</th>
+                    <th>Narrated</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody id="documentaryTable"></tbody>
@@ -135,8 +135,8 @@
     const ANIMATION_API = "http://localhost:5002/api/animations";
     const DOCUMENTARY_API = "http://localhost:5002/api/documentaries";
 
-    let editandoId = null;
-    let editandoTipo = null;
+    let editingId = null;
+    let editingType = null;
 
     const animationFields = document.getElementById("animationFields");
     const documentaryFields = document.getElementById("documentaryFields");
@@ -155,18 +155,18 @@
     const animationTable = document.getElementById("animationTable");
     const documentaryTable = document.getElementById("documentaryTable");
 
-    function toggleTipo() {
+    function toggleType() {
         animationFields.style.display = typeSelect.value === "animation" ? "block" : "none";
         documentaryFields.style.display = typeSelect.value === "documentary" ? "block" : "none";
     }
 
-    function salvar() {
-        if (editandoId) atualizar();
-        else cadastrar();
+    function save() {
+        if (editingId) update();
+        else create();
     }
 
-    function cadastrar() {
-        const tipo = typeSelect.value;
+    function create() {
+        const type = typeSelect.value;
 
         const base = {
             title: titleInput.value,
@@ -179,7 +179,7 @@
         let url = ANIMATION_API;
         let body = {};
 
-        if (tipo === "animation") {
+        if (type === "animation") {
             body = { ...base, animationStudio: animationStudioInput.value, dubbed: dubbedInput.checked };
         } else {
             url = DOCUMENTARY_API;
@@ -192,28 +192,28 @@
             body: JSON.stringify(body)
         })
             .then(r => {
-                if (!r.ok) throw new Error("Erro ao cadastrar");
+                if (!r.ok) throw new Error("Error while creating");
                 return r.json();
             })
             .then(data => {
-                alert("Adicionado! ID: " + (data.id ?? "N/A"));
-                listarAnimacoes();
-                listarDocumentarios();
+                alert("Added! ID: " + (data.id ?? "N/A"));
+                listAnimations();
+                listDocumentaries();
             })
             .catch(e => alert(e.message));
     }
 
-    function editar(id, tipo) {
-        const api = tipo === "animation" ? ANIMATION_API : DOCUMENTARY_API;
+    function edit(id, type) {
+        const api = type === "animation" ? ANIMATION_API : DOCUMENTARY_API;
 
         fetch(`${api}/${id}`)
             .then(r => r.json())
             .then(item => {
-                editandoId = id;
-                editandoTipo = tipo;
+                editingId = id;
+                editingType = type;
 
-                typeSelect.value = tipo;
-                toggleTipo();
+                typeSelect.value = type;
+                toggleType();
 
                 titleInput.value = item.title;
                 directorInput.value = item.director;
@@ -221,19 +221,19 @@
                 releaseYearInput.value = item.releaseYear;
                 durationInput.value = item.duration;
 
-                if (tipo === "animation") {
+                if (type === "animation") {
                     animationStudioInput.value = item.animationStudio;
                     dubbedInput.checked = item.dubbed;
                 } else {
                     narratedInput.checked = item.narrated;
                 }
 
-                document.getElementById("btnSalvar").textContent = "Atualizar";
+                document.getElementById("btnSave").textContent = "Update";
                 window.scrollTo({ top: 0, behavior: "smooth" });
             });
     }
 
-    function atualizar() {
+    function update() {
         const base = {
             title: titleInput.value,
             director: directorInput.value,
@@ -244,11 +244,11 @@
 
         let url, body;
 
-        if (editandoTipo === "animation") {
-            url = `${ANIMATION_API}/${editandoId}`;
+        if (editingType === "animation") {
+            url = `${ANIMATION_API}/${editingId}`;
             body = { ...base, animationStudio: animationStudioInput.value, dubbed: dubbedInput.checked };
         } else {
-            url = `${DOCUMENTARY_API}/${editandoId}`;
+            url = `${DOCUMENTARY_API}/${editingId}`;
             body = { ...base, narrated: narratedInput.checked };
         }
 
@@ -258,16 +258,16 @@
             body: JSON.stringify(body)
         })
             .then(() => {
-                cancelarEdicao();
-                listarAnimacoes();
-                listarDocumentarios();
+                cancelEdit();
+                listAnimations();
+                listDocumentaries();
             });
     }
 
-    function cancelarEdicao() {
-        editandoId = null;
-        editandoTipo = null;
-        document.getElementById("btnSalvar").textContent = "Cadastrar";
+    function cancelEdit() {
+        editingId = null;
+        editingType = null;
+        document.getElementById("btnSave").textContent = "Create";
 
         titleInput.value = "";
         directorInput.value = "";
@@ -279,13 +279,13 @@
         narratedInput.checked = false;
     }
 
-    function listarAnimacoes() {
+    function listAnimations() {
         animationTable.innerHTML = "";
         fetch(ANIMATION_API)
             .then(r => r.json())
             .then(data => {
-                const lista = data.content ?? data;
-                lista.forEach(a => {
+                const list = data.content ?? data;
+                list.forEach(a => {
                     animationTable.insertAdjacentHTML("beforeend", `
                     <tr>
                         <td>${a.id}</td>
@@ -295,24 +295,25 @@
                         <td>${a.releaseYear}</td>
                         <td>${a.duration}</td>
                         <td>${a.animationStudio}</td>
-                        <td>${a.dubbed ? 'Sim' : 'Não'}</td>
+                        <td>${a.dubbed ? 'Yes' : 'No'}</td>
                         <td>
                             <button class="btn btn-sm btn-primary"
-        onclick="irParaEdicao(${a.id}, 'animation')">✏️</button>
-                            <button class="btn btn-sm btn-danger" onclick="deletar(${a.id}, 'animation')">🗑️</button>
+                                onclick="goToEdit(${a.id}, 'animation')">✏️</button>
+                            <button class="btn btn-sm btn-danger"
+                                onclick="deleteItem(${a.id}, 'animation')">🗑️</button>
                         </td>
                     </tr>`);
                 });
             });
     }
 
-    function listarDocumentarios() {
+    function listDocumentaries() {
         documentaryTable.innerHTML = "";
         fetch(DOCUMENTARY_API)
             .then(r => r.json())
             .then(data => {
-                const lista = data.content ?? data;
-                lista.forEach(d => {
+                const list = data.content ?? data;
+                list.forEach(d => {
                     documentaryTable.insertAdjacentHTML("beforeend", `
                     <tr>
                         <td>${d.id}</td>
@@ -321,29 +322,30 @@
                         <td>${d.genre}</td>
                         <td>${d.releaseYear}</td>
                         <td>${d.duration}</td>
-                        <td>${d.narrated ? 'Sim' : 'Não'}</td>
+                        <td>${d.narrated ? 'Yes' : 'No'}</td>
                         <td>
                             <button class="btn btn-sm btn-primary"
-                                onclick="irParaEdicao(${d.id}, 'documentary')">✏️</button>
-                            <button class="btn btn-sm btn-danger" onclick="deletar(${d.id}, 'documentary')">🗑️</button>
+                                onclick="goToEdit(${d.id}, 'documentary')">✏️</button>
+                            <button class="btn btn-sm btn-danger"
+                                onclick="deleteItem(${d.id}, 'documentary')">🗑️</button>
                         </td>
                     </tr>`);
                 });
             });
     }
 
-    function buscarPorId(tipo) {
-        const id = tipo === "animation"
+    function searchById(type) {
+        const id = type === "animation"
             ? document.getElementById("searchAnimationId").value
             : document.getElementById("searchDocumentaryId").value;
 
-        const tabela = tipo === "animation" ? animationTable : documentaryTable;
-        const api = tipo === "animation" ? ANIMATION_API : DOCUMENTARY_API;
+        const table = type === "animation" ? animationTable : documentaryTable;
+        const api = type === "animation" ? ANIMATION_API : DOCUMENTARY_API;
 
         fetch(`${api}/${id}`)
             .then(r => r.ok ? r.json() : Promise.reject())
             .then(item => {
-                tabela.innerHTML = `
+                table.innerHTML = `
                 <tr>
                     <td>${item.id}</td>
                     <td>${item.title}</td>
@@ -351,36 +353,36 @@
                     <td>${item.genre}</td>
                     <td>${item.releaseYear}</td>
                     <td>${item.duration}</td>
-                    <td>${tipo === 'documentary'
-                    ? (item.narrated ? 'Sim' : 'Não')
-                    : (item.dubbed ? 'Sim' : 'Não')}</td>
+                    <td>${type === 'documentary'
+                    ? (item.narrated ? 'Yes' : 'No')
+                    : (item.dubbed ? 'Yes' : 'No')}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="editar(${item.id}, '${tipo}')">✏️</button>
-                        <button class="btn btn-sm btn-danger" onclick="deletar(${item.id}, '${tipo}')">🗑️</button>
+                        <button class="btn btn-sm btn-primary" onclick="edit(${item.id}, '${type}')">✏️</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteItem(${item.id}, '${type}')">🗑️</button>
                     </td>
                 </tr>`;
             })
-            .catch(() => alert("Item não encontrado"));
+            .catch(() => alert("Item not found"));
     }
 
-    function deletar(id, tipo) {
-        if (!confirm("Tem certeza?")) return;
-        const api = tipo === "animation" ? ANIMATION_API : DOCUMENTARY_API;
+    function deleteItem(id, type) {
+        if (!confirm("Are you sure?")) return;
+        const api = type === "animation" ? ANIMATION_API : DOCUMENTARY_API;
         fetch(`${api}/${id}`, { method: "DELETE" })
             .then(() => {
-                listarAnimacoes();
-                listarDocumentarios();
+                listAnimations();
+                listDocumentaries();
             });
     }
 
-    function irParaEdicao(id, type) {
+    function goToEdit(id, type) {
         window.location.href = `/edit?id=${id}&type=${type}`;
     }
 
     window.onload = () => {
-        toggleTipo();
-        listarAnimacoes();
-        listarDocumentarios();
+        toggleType();
+        listAnimations();
+        listDocumentaries();
     };
 </script>
 
